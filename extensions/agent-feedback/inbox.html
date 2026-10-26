@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agent inbox</title>
+    <link rel="stylesheet" href="inbox.css">
+    <script src="inbox.js" defer></script>
+</head>
+<body>
+    <header>
+        <div><h1>Agent inbox</h1><p>Small frictions. Better next runs.</p></div>
+        <button id="refresh" type="button">Refresh</button>
+    </header>
+    <main>
+        <label>Kind<select id="kind"><option value="">All feedback</option><option value="complaint">Complaints</option><option value="suggestion">Suggestions</option></select></label>
+        <p id="message" role="status" aria-live="polite">Loading your inbox...</p>
+        <p id="error" role="alert" hidden></p>
+        <section id="reports" aria-label="Feedback reports" aria-busy="true"></section>
+        <footer>Stored locally. Ask My Copilot to review recurring friction and propose improvements.</footer>
+    </main>
+</body>
+</html>

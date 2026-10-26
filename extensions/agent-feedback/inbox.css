@@ -1,0 +1,47 @@
+:root { color-scheme: light dark; }
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    color: var(--text-color-default, #1f2328);
+    background: var(--background-color-default, #fff);
+    font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+    font-size: var(--text-body-medium, 14px);
+    line-height: var(--leading-body-medium, 20px);
+}
+header { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 24px 24px 20px; border-bottom: 1px solid var(--border-color-default, #d1d9e0); }
+h1 { margin: 0; font-size: var(--text-title-large, 26px); line-height: 1.2; font-weight: var(--font-weight-semibold, 600); }
+header p { margin: 8px 0 0; color: var(--text-color-muted, #59636e); }
+main { padding: 20px 24px; }
+main > label { max-width: 220px; }
+label { display: grid; gap: 6px; font-weight: var(--font-weight-semibold, 600); }
+select, textarea, button { font: inherit; color: inherit; background: var(--background-color-default, #fff); border: 1px solid var(--border-color-default, #d1d9e0); border-radius: 6px; }
+select, button { min-height: 36px; padding: 6px 12px; }
+button { cursor: pointer; font-weight: var(--font-weight-semibold, 600); }
+button:hover { background: var(--background-color-muted, #f6f8fa); }
+button:disabled { cursor: wait; opacity: .6; }
+:focus-visible { outline: 2px solid var(--color-focus-outline, #0969da); outline-offset: 3px; }
+#message, footer, .meta { color: var(--text-color-muted, #59636e); }
+#message { margin: 24px 0 12px; }
+#error { color: var(--true-color-red, #b42318); }
+article { padding: 20px 0 24px; border-bottom: 1px solid var(--border-color-default, #d1d9e0); }
+article:first-child { padding-top: 8px; }
+h2 { margin: 0; font-size: inherit; font-weight: var(--font-weight-semibold, 600); }
+.body, .fix, .note { white-space: pre-wrap; overflow-wrap: anywhere; max-width: 72ch; margin: 12px 0; }
+.meta { font-size: 12px; overflow-wrap: anywhere; }
+.triage { display: grid; gap: 12px; margin-top: 12px; max-width: 560px; }
+textarea { resize: vertical; padding: 10px; min-height: 80px; font-weight: normal; }
+.triage button { justify-self: start; }
+footer { margin-top: 28px; font-size: 12px; }
+@media (max-width: 420px) {
+    header { padding: 20px 16px 16px; }
+    main { padding: 16px; }
+    h1 { font-size: 22px; }
+}
+@media (prefers-color-scheme: dark) {
+    body { background: var(--background-color-default, #0d1117); color: var(--text-color-default, #f0f6fc); }
+    select, textarea, button { background: var(--background-color-default, #0d1117); border-color: var(--border-color-default, #3d444d); }
+    header, article { border-color: var(--border-color-default, #3d444d); }
+    header p, #message, footer, .meta { color: var(--text-color-muted, #b1bac4); }
+    button:hover { background: var(--background-color-muted, #212830); }
+    #error { color: var(--true-color-red, #ff7b72); }
+}

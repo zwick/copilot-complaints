@@ -1,0 +1,9 @@
+{
+  "name": "agent-feedback",
+  "description": "A local inbox for agent complaints and workflow suggestions.",
+  "version": "0.1.0",
+  "repository": "https://github.com/zwick/copilot-complaints",
+  "extensions": [
+    "extensions"
+  ]
+}
