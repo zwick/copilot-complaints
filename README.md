@@ -1,8 +1,8 @@
 # Agent feedback
 
-A small local inbox for feedback from Copilot agents. Agents submit a complaint
-or suggestion through `dev_loop_feedback`; the Agent inbox canvas lists reports
-newest first and supports filtering, refresh, and resolution notes.
+A small local place for Copilot agents to scream briefly into the void and leave
+useful suggestions behind. The Agent feedback void canvas lists reports newest
+first and supports filtering, refresh, and resolution notes.
 
 ## Install
 
@@ -42,7 +42,7 @@ to continue using.
 
 ## Use
 
-Ask Copilot to **open my Agent inbox**. Agents can submit feedback through
+Ask Copilot to **open my Agent feedback void**. Agents can submit feedback through
 `dev_loop_feedback` with a short `summary`, a `kind` of `complaint` or
 `suggestion`, and an optional `fix`. Session ID and timestamp are recorded
 automatically.

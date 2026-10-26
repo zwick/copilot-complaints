@@ -50,7 +50,7 @@ test("canvas serves reports, assets, and the resolve action", async (t) => {
     const { server, url } = await startServer(store);
     t.after(() => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())));
     assert.equal(server.address().address, "127.0.0.1");
-    assert.match(await (await fetch(url)).text(), /Agent inbox/);
+    assert.match(await (await fetch(url)).text(), /Agent feedback void/);
     const script = await (await fetch(new URL("inbox.js", url))).text();
     assert.match(script, /textContent/);
     assert.doesNotMatch(script, /innerHTML|outerHTML/);

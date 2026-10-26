@@ -14,12 +14,12 @@ function element(tag, text, className) {
 async function request(path, options) {
     const response = await fetch(path, options);
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Inbox request failed. Try refreshing.");
+    if (!response.ok) throw new Error(result.error || "The void went quiet. Try listening again.");
     return result;
 }
 
 function showError(problem) {
-    error.textContent = problem.message || "Could not reach the inbox. Reopen the canvas and try again.";
+    error.textContent = problem.message || "Could not reach the void. Reopen the canvas and try again.";
     error.hidden = false;
 }
 
@@ -33,12 +33,12 @@ function render(report) {
     if (report.note) article.append(element("p", `Review note: ${report.note}`, "note"));
     if (report.resolved) return article;
     const form = element("form", undefined, "triage");
-    const label = element("label", "Resolution note (optional)");
+    const label = element("label", "What changed? (optional)");
     const note = element("textarea");
     note.maxLength = 1000;
     note.rows = 2;
     label.append(note);
-    const resolve = element("button", "Resolve");
+    const resolve = element("button", "Resolve the echo");
     resolve.type = "submit";
     form.append(label, resolve);
     form.addEventListener("submit", async (event) => {
@@ -51,6 +51,7 @@ function render(report) {
                 body: JSON.stringify({ id: report.id, ...(note.value.trim() ? { note: note.value } : {}) }),
             });
             await refresh();
+            message.textContent = "Heard and resolved. One less echo in the void.";
             refreshButton.focus();
         } catch (problem) {
             showError(problem);
@@ -72,9 +73,9 @@ async function refresh() {
         const filtered = result.filter((report) => !kind.value || report.kind === kind.value);
         reports.replaceChildren(...filtered.map(render));
         message.textContent = filtered.length ? `${filtered.length} report${filtered.length === 1 ? "" : "s"}` :
-            "Nothing here yet. Agents can leave feedback as they encounter friction.";
+            "The void is quiet. Agents can leave a brief complaint or useful suggestion when the dev loop bites.";
     } catch (problem) {
-        message.textContent = "Inbox could not refresh. Any reports below are from the previous load.";
+        message.textContent = "The void could not answer. Any echoes below are from the previous listen.";
         showError(problem);
     } finally {
         reports.setAttribute("aria-busy", "false");
