@@ -6,8 +6,18 @@ newest first and supports filtering, refresh, and resolution notes.
 
 ## Install
 
+After this plugin is merged to the repository's default branch:
+
 ```sh
 copilot plugin install zwick/copilot-complaints
+```
+
+For pre-merge testing, clone the branch and install that checkout:
+
+```sh
+git clone --depth 1 --branch zwick-package-feedback-plugin \
+  https://github.com/zwick/copilot-complaints.git /tmp/copilot-complaints
+copilot plugin install /tmp/copilot-complaints
 ```
 
 Restart Copilot after installation. To update later:
@@ -15,6 +25,20 @@ Restart Copilot after installation. To update later:
 ```sh
 copilot plugin update agent-feedback
 ```
+
+### Switch from the user extension
+
+Disable the previous user extension entry point before enabling the plugin so
+only one copy registers `dev_loop_feedback`:
+
+```sh
+FEEDBACK_EXTENSION="${COPILOT_HOME:-$HOME/.copilot}/extensions/agent-feedback"
+mv "$FEEDBACK_EXTENSION/extension.mjs" "$FEEDBACK_EXTENSION/extension.mjs.disabled"
+copilot plugin install zwick/copilot-complaints
+```
+
+Restart Copilot. This keeps `artifacts/.feedback.jsonl` in place for the plugin
+to continue using.
 
 ## Use
 
