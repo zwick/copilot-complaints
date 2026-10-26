@@ -21,13 +21,17 @@ export async function startServer(store) {
                 res.end(JSON.stringify(await store.list()));
             } else if (req.method === "POST" && req.url === "/resolve") {
                 if (req.headers["content-type"] !== "application/json") throw new FeedbackError("Expected JSON.");
-                let body = "";
+                const chunks = [];
+                let size = 0;
                 for await (const chunk of req) {
-                    body += chunk;
-                    if (Buffer.byteLength(body) > 16384) throw new FeedbackError("Request is too large.");
+                    size += chunk.length;
+                    if (size > 16384) throw new FeedbackError("Request is too large.");
+                    chunks.push(chunk);
                 }
                 let input;
-                try { input = JSON.parse(body); } catch { throw new FeedbackError("Invalid JSON."); }
+                try { input = JSON.parse(Buffer.concat(chunks, size).toString("utf8")); } catch {
+                    throw new FeedbackError("Invalid JSON.");
+                }
                 const result = await store.resolve(input?.id, input?.note);
                 res.setHeader("Content-Type", "application/json");
                 res.end(JSON.stringify(result));

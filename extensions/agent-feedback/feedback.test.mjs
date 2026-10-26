@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
+import { request } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
@@ -10,6 +11,30 @@ async function fixture(t) {
     const dir = await mkdtemp(join(tmpdir(), "feedback-test-"));
     t.after(() => rm(dir, { recursive: true, force: true }));
     return new FeedbackStore(dir);
+}
+
+function postChunks(url, chunks) {
+    return new Promise((resolve, reject) => {
+        const req = request(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+        }, (res) => {
+            const body = [];
+            res.on("data", (chunk) => body.push(chunk));
+            res.on("end", () => resolve({
+                status: res.statusCode,
+                body: JSON.parse(Buffer.concat(body).toString("utf8")),
+            }));
+        });
+        req.on("error", reject);
+        let index = 0;
+        const writeNext = () => {
+            if (index === chunks.length) return req.end();
+            req.write(chunks[index++]);
+            setImmediate(writeNext);
+        };
+        writeNext();
+    });
 }
 
 test("reports append with session attribution and survive reopening, newest first", async (t) => {
@@ -66,4 +91,29 @@ test("canvas serves reports, assets, and the resolve action", async (t) => {
         method: "POST", headers: { "Content-Type": "application/json" }, body: "{",
     });
     assert.equal(invalid.status, 400);
+});
+
+test("resolve decodes split UTF-8 once and enforces the raw byte limit", async (t) => {
+    const store = await fixture(t);
+    const saved = await store.submit({ kind: "complaint", summary: "Example." }, "session-1");
+    const oversized = await store.submit({ kind: "suggestion", summary: "Another example." }, "session-2");
+    const { server, url } = await startServer(store);
+    t.after(() => new Promise((resolve, reject) => server.close((error) => error ? reject(error) : resolve())));
+
+    const body = Buffer.from(JSON.stringify({ id: saved.id, note: "café" }));
+    const character = body.indexOf(Buffer.from("é"));
+    const response = await postChunks(new URL("resolve", url), [
+        body.subarray(0, character + 1),
+        body.subarray(character + 1),
+    ]);
+    assert.equal(response.status, 200);
+    assert.equal((await store.list()).find((report) => report.id === saved.id).note, "café");
+
+    const tooLarge = await postChunks(new URL("resolve", url), [
+        Buffer.alloc(8192, "a"),
+        Buffer.alloc(8193, "b"),
+    ]);
+    assert.equal(tooLarge.status, 400);
+    assert.equal(tooLarge.body.error, "Request is too large.");
+    assert.equal((await store.list()).find((report) => report.id === oversized.id).resolved, false);
 });
